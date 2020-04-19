@@ -1,5 +1,6 @@
 import requests
 
+
 def get_docker_tags(image):
     print(f"[docker] {image}")
     try:

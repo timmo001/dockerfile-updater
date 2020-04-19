@@ -61,6 +61,7 @@ class Dockerfile:
         if not structure.get("run"):
             return
 
+        print(f"exclude_type: {self.config.exclude_type}")
         if "base" not in self.config.exclude_type:
             self.update_base_image(structure)
         if "pip" not in self.config.exclude_type:
@@ -76,6 +77,7 @@ class Dockerfile:
         installed = structure.get("from")[0].strip()
         available = None
         image = None
+        print(f"installed: {structure}")
         if ":" not in installed:
             return
         if "alpine" in installed:
@@ -114,7 +116,8 @@ class Dockerfile:
                 self.get_content()
                 self.content = self.content.replace(installed, available)
                 self.write_content()
-                self.commit(image, installed.split(":")[-1], available.split(":")[-1])
+                self.commit(image, installed.split(
+                    ":")[-1], available.split(":")[-1])
 
     def update_pip_packages(self, structure):
         for package in get_packages(structure)["pypi"]:
@@ -135,9 +138,11 @@ class Dockerfile:
                 package.available = version_alpine(package.name)
                 if package.updated:
                     self.get_content()
-                    self.content = self.content.replace(package.old, package.new)
+                    self.content = self.content.replace(
+                        package.old, package.new)
                     self.write_content()
-                    self.commit(package.name, package.installed, package.available)
+                    self.commit(package.name, package.installed,
+                                package.available)
 
     def update_debian_packages(self, structure):
         for package in get_packages(structure)["debian"]:
@@ -145,6 +150,8 @@ class Dockerfile:
                 package.available = version_debian(package.name)
                 if package.updated:
                     self.get_content()
-                    self.content = self.content.replace(package.old, package.new)
+                    self.content = self.content.replace(
+                        package.old, package.new)
                     self.write_content()
-                    self.commit(package.name, package.installed, package.available)
+                    self.commit(package.name, package.installed,
+                                package.available)
